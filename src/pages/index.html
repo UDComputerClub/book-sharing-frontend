@@ -1,3 +1,9 @@
+<p class="greeting-id"></p>
+<p class="greeting-content"></p>
+<p>data:</p>
+<p class="data"></p>
+<p>error:</p>
+<p class="error"></p>
 <div class="grid-container">
 <ul class="tabs" data-deep-link="true" data-tabs id="main-tabs">
     <li class="tabs-title is-active"><a href="#list-panel" aria-selected="true">List a Book</a></li>
@@ -6,38 +12,63 @@
 </ul>
 <div class="tabs-content" data-tabs-content="main-tabs">
     <div class="tabs-panel is-active" id="list-panel">
-        <p>Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh
-            porttitor. Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor.
-            Suspendisse dictum feugiat nisl ut dapibus.</p>
+        <h4>Create New Book Listing</h4>
+        <form>
+            <div class="grid-container">
+                <div class="grid-x grid-padding-x">
+                    <div class="medium-6 cell">
+                        <label>Enter Book Name
+                            <input type="text" placeholder="Book Name">
+                        </label>
+                    </div>
+                </div>
+                <a href="#" class="button">Search</a>
+            </div>
+        </form>
     </div>
     <div class="tabs-panel" id="find-panel">
-        <label>Major
-            <select>
-                <option value="computer-science">Computer Science</option>
-                <option value="math">Math</option>
-                <option value="philosophy">Philosophy</option>
-                <option value="psychology">Psychology</option>
-            </select>
-        </label>
-        <label>Class
-            <select>
-                <option value="computer-science">Software Engineering</option>
-                <option value="math">Intro CS</option>
-                <option value="philosophy">Networking</option>
-                <option value="psychology">Databases</option>
-            </select>
-        </label>
-        <label>Professor
-            <select>
-                <option value="hochberg">Hochberg</option>
-                <option value="not-hochberg">Not Hochberg</option>
-                <option value="russell">Russell</option>
-                <option value="andrews">Andrews</option>
-            </select>
-        </label>
-        <a class="button primary" href="#">Search</a>
+        <h4>Find Your Book</h4>
+        <form>
+            <div class="grid-container">
+                <div class="grid-x grid-padding-x">
+                    <div class="medium-6 cell">
+                        <label>Search by Class Name
+                            <input type="text" placeholder="Class Name">
+                        </label>
+                    </div>
+                </div>
+                <a href="#" class="button">Search</a>
+            </div>
+        </form>
+        <!--<p>Maybe delete:</p>-->
+        <!--<label>Major-->
+            <!--<select>-->
+                <!--<option value="computer-science">Computer Science</option>-->
+                <!--<option value="math">Math</option>-->
+                <!--<option value="philosophy">Philosophy</option>-->
+                <!--<option value="psychology">Psychology</option>-->
+            <!--</select>-->
+        <!--</label>-->
+        <!--<label>Class-->
+            <!--<select>-->
+                <!--<option value="computer-science">Software Engineering</option>-->
+                <!--<option value="math">Intro CS</option>-->
+                <!--<option value="philosophy">Networking</option>-->
+                <!--<option value="psychology">Databases</option>-->
+            <!--</select>-->
+        <!--</label>-->
+        <!--<label>Professor-->
+            <!--<select>-->
+                <!--<option value="hochberg">Hochberg</option>-->
+                <!--<option value="not-hochberg">Not Hochberg</option>-->
+                <!--<option value="russell">Russell</option>-->
+                <!--<option value="andrews">Andrews</option>-->
+            <!--</select>-->
+        <!--</label>-->
+        <!--<a class="button primary" href="#">Search</a>-->
     </div>
     <div class="tabs-panel" id="new-panel">
+        <h4>Recent Listings</h4>
         <div class="card">
             <div class="card-divider">
                 Modern Operating Systems
