@@ -58,11 +58,28 @@ db.collection("books").get().then(function(querySnapshot) {
         $('.new-postings').append(card);
     });
 });
+let userInfo;
+function postListing() {
+    // Add a new document with a generated id.
+    db.collection("books").add({
+        uid: userInfo.uid,
+        name: $("#book-name").val(),
+        professor: $("#professor").val(),
+        price: $("#price").val()
+    })
+        .then(function () {
+            console.log("Document successfully written!");
+        })
+        .catch(function (error) {
+            console.error("Error writing document: ", error);
+        });
+}
 
+$("#create-listing-button").click(postListing);
 
 // FirebaseUI config.
 const uiConfig = {
-    signInSuccessUrl: '<url-to-redirect-to-on-success>',
+    signInSuccessUrl: '',
     signInOptions: [
         // Leave the lines as is for the providers you want to offer your users.
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
@@ -91,6 +108,7 @@ ui.start('#firebaseui-auth-container', uiConfig);
 function initApp() {
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
+            userInfo = user;
             // User is signed in.
             var displayName = user.displayName;
             var email = user.email;

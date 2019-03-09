@@ -19,11 +19,19 @@
                 <div class="grid-x grid-padding-x">
                     <div class="medium-6 cell">
                         <label>Enter Book Name
-                            <input type="text" placeholder="Book Name">
+                            <input type="text" placeholder="Book Name" id="book-name">
+                        </label>
+                        <label>Enter Professor (optional)
+                            <input type="text" placeholder="Professor" id="professor">
+                        </label>
+                        <label>Enter Price
+                            <input type="number" placeholder="Price" id="price">
                         </label>
                     </div>
                 </div>
-                <a href="#" class="button">Search</a>
+                <a class="button" id="create-listing-button">Create Listing</a>
+                <p>Later, this form will just be the book name and this search button. the user will enter their query and be shown a list of books, then given the option to choose one or make a new book name.</p>
+                <a class="button">Search</a>
                 <div id="firebaseui-auth-container"></div>
             </div>
         </form>
