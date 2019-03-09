@@ -1,9 +1,10 @@
-<p class="greeting-id"></p>
-<p class="greeting-content"></p>
-<p>data:</p>
-<p class="data"></p>
-<p>error:</p>
-<p class="error"></p>
+<p>sign-in-status:</p>
+<p id="sign-in-status"></p>
+<p>sign-in:</p>
+<p id="sign-in"></p>
+<p>account-details:</p>
+<p id="account-details"></p>
+<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
 <div class="grid-container">
 <ul class="tabs" data-deep-link="true" data-tabs id="main-tabs">
     <li class="tabs-title is-active"><a href="#list-panel" aria-selected="true">List a Book</a></li>
@@ -23,6 +24,7 @@
                     </div>
                 </div>
                 <a href="#" class="button">Search</a>
+                <div id="firebaseui-auth-container"></div>
             </div>
         </form>
     </div>
@@ -67,17 +69,26 @@
         <!--</label>-->
         <!--<a class="button primary" href="#">Search</a>-->
     </div>
-    <div class="tabs-panel" id="new-panel">
+    <div class="tabs-panel new-postings" id="new-panel">
         <h4>Recent Listings</h4>
-        <div class="card">
-            <div class="card-divider">
-                Modern Operating Systems
-            </div>
-            <img width="220" src="https://images-na.ssl-images-amazon.com/images/I/51UiI6CdvmL._SX340_BO1,204,203,200_.jpg">
-            <div class="card-section">
-                <p>$42.00</p>
-            </div>
-        </div>
+        <!--<div class="card">-->
+            <!--<div class="card-divider">-->
+                <!--Modern Operating Systems-->
+            <!--</div>-->
+            <!--<img width="220" src="https://images-na.ssl-images-amazon.com/images/I/51UiI6CdvmL._SX340_BO1,204,203,200_.jpg">-->
+            <!--<div class="card-section">-->
+                <!--<p>$42.00</p>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="card">-->
+            <!--<div class="card-divider">-->
+                <!--Modern Operating Systems-->
+            <!--</div>-->
+            <!--<img width="220" src="https://images-na.ssl-images-amazon.com/images/I/51UiI6CdvmL._SX340_BO1,204,203,200_.jpg">-->
+            <!--<div class="card-section">-->
+                <!--<p>$42.00</p>-->
+            <!--</div>-->
+        <!--</div>-->
     </div>
 </div>
 </div>
