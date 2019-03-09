@@ -16,7 +16,7 @@ require('foundation-sites');
 
 $(document).foundation();
 
-const firebase = require('firebase');
+const firebase = require('firebase/app');
 const firebaseui = require('firebaseui');
 // Required for side-effects
 require("firebase/firestore");
