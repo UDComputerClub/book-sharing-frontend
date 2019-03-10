@@ -32,21 +32,21 @@ let config = {
 };
 firebase.initializeApp(config);
 let db = firebase.firestore();
-db.collection("listings").get().then(function(querySnapshot) {
-    querySnapshot.forEach(function(doc) {
+db.collection("listings").get().then(function (querySnapshot) {
+    querySnapshot.forEach(function (doc) {
         // doc.data() is never undefined for query doc snapshots
         console.log(doc.id, " => ", doc.data());
         let json = doc.data();
         let name = '';
-        if(json['name'] !== undefined){
+        if (json['name'] !== undefined) {
             name = json['name'];
         }
         let professor = '';
-        if(json['professor'] !== undefined){
+        if (json['professor'] !== undefined) {
             professor = json['professor'];
         }
         let price = '';
-        if(json['price'] !== undefined){
+        if (json['price'] !== undefined) {
             price = json['price'];
         }
         let card = `<div class="card">
@@ -64,6 +64,7 @@ db.collection("listings").get().then(function(querySnapshot) {
 });
 
 let userInfo;
+
 function postListing() {
     // Add a new document with a generated id.
     db.collection("/listings").add({
@@ -99,7 +100,7 @@ const uiConfig = {
     // Terms of service url/callback.
     tosUrl: '<your-tos-url>',
     // Privacy policy url/callback.
-    privacyPolicyUrl: function() {
+    privacyPolicyUrl: function () {
         window.location.assign('<your-privacy-policy-url>');
     }
 };
@@ -111,18 +112,18 @@ ui.start('#firebaseui-auth-container', uiConfig);
 
 
 function initApp() {
-    firebase.auth().onAuthStateChanged(function(user) {
+    firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
             userInfo = user;
             // User is signed in.
-            var displayName = user.displayName;
-            var email = user.email;
-            var emailVerified = user.emailVerified;
-            var photoURL = user.photoURL;
-            var uid = user.uid;
-            var phoneNumber = user.phoneNumber;
-            var providerData = user.providerData;
-            user.getIdToken().then(function(accessToken) {
+            const displayName = user.displayName;
+            const email = user.email;
+            const emailVerified = user.emailVerified;
+            const photoURL = user.photoURL;
+            const uid = user.uid;
+            const phoneNumber = user.phoneNumber;
+            const providerData = user.providerData;
+            user.getIdToken().then(function (accessToken) {
                 $("#sign-in-status").html('Signed in');
                 $("#sign-in").html('Sign out');
                 $("#account-details").html(
@@ -144,35 +145,13 @@ function initApp() {
             $("#sign-in").html('Sign in');
             $("#account-details").html('null');
         }
-    }, function(error) {
+    }, function (error) {
         console.log(error);
     });
 }
 
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
     initApp()
 });
-
-
-
-
-
-
-
-function getBookList(){
-    let request = $.ajax({
-        url: "https://booksharing-40ba7.firebaseio.com",
-        method: "GET",
-        dataType: "json"
-    });
-
-    request.done(function( data ) {
-        $( ".data" ).html( data );
-    });
-
-    request.fail(function( jqXHR, textStatus ) {
-        $( ".error" ).html( textStatus );
-    });
-}
 
 //$(document).ready(getBookList);
