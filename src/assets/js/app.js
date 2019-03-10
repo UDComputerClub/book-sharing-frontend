@@ -32,7 +32,7 @@ let config = {
 };
 firebase.initializeApp(config);
 let db = firebase.firestore();
-db.collection("books").get().then(function(querySnapshot) {
+db.collection("listings").get().then(function(querySnapshot) {
     querySnapshot.forEach(function(doc) {
         // doc.data() is never undefined for query doc snapshots
         console.log(doc.id, " => ", doc.data());
@@ -45,23 +45,28 @@ db.collection("books").get().then(function(querySnapshot) {
         if(json['professor'] !== undefined){
             professor = json['professor'];
         }
+        let price = '';
+        if(json['price'] !== undefined){
+            price = json['price'];
+        }
         let card = `<div class="card">
             <div class="card-divider">
                 ${name}
             </div>
             <img width="220" src="https://images-na.ssl-images-amazon.com/images/I/51UiI6CdvmL._SX340_BO1,204,203,200_.jpg">
             <div class="card-section">
-                <p>Price: $42.00</p>
+                <p>Price: ${price}</p>
                 <p>Professor: ${professor}</p>
             </div>
         </div>`;
         $('.new-postings').append(card);
     });
 });
+
 let userInfo;
 function postListing() {
     // Add a new document with a generated id.
-    db.collection("books").add({
+    db.collection("/listings").add({
         uid: userInfo.uid,
         name: $("#book-name").val(),
         professor: $("#professor").val(),
