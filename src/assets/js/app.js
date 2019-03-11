@@ -55,7 +55,7 @@ db.collection("listings").get().then(function (querySnapshot) {
             </div>
             <img width="220" src="https://images-na.ssl-images-amazon.com/images/I/51UiI6CdvmL._SX340_BO1,204,203,200_.jpg">
             <div class="card-section">
-                <p>Price: ${price}</p>
+                <p>Price: \$${price}</p>
                 <p>Professor: ${professor}</p>
             </div>
         </div>`;
@@ -82,6 +82,7 @@ function postListing() {
 }
 
 $("#create-listing-button").click(postListing);
+$("#listing-search-button").click(searchListings);
 
 // FirebaseUI config.
 const uiConfig = {
@@ -155,3 +156,105 @@ window.addEventListener('load', function () {
 });
 
 //$(document).ready(getBookList);
+const gapScore = 3;
+const swapScore = 2;
+const matchScore = 0;
+const memos = new Map();
+function optimal(bitshift, string1, string2, i, j) {
+    const bitmask = (i << bitshift) | j;
+    if (memos.has(bitmask)) {
+        return memos.get(bitmask);
+    }
+    if (i === 0) {
+        return j * gapScore;
+    }
+    if (j === 0) {
+        return i * gapScore;
+    }
+    let aScore = optimal(bitshift, string1, string2, i - 1, j) + gapScore;
+    aScore = Math.min(aScore, optimal(bitshift, string1, string2, i, j - 1) + gapScore);
+    let scoreChange = 0;
+    if (string1.charAt(i - 1) === string2.charAt(j - 1)) {
+        scoreChange = matchScore;
+    } else {
+        scoreChange = swapScore;
+    }
+    aScore = Math.min(aScore, optimal(bitshift, string1, string2, i - 1, j - 1) + scoreChange);
+    memos.set(bitmask, aScore);
+    return aScore;
+}
+
+function alignmentScore(string1, string2) {
+    // console.log("doing a score!");
+    // console.log(string1);
+    // console.log(string2);
+    // console.log(string1.length);
+    // console.log(string2.length);
+    memos.clear();
+    if (string1.length < string2.length) {
+        const bitshiftAmount = Math.ceil(Math.log2(string1.length));
+        return optimal(bitshiftAmount, string2, string1, string2.length, string1.length);
+    }
+    const bitshiftAmount = Math.ceil(Math.log2(string2.length));
+    return optimal(bitshiftAmount, string1, string2, string1.length, string2.length);
+}
+
+function displaySearchResults(listings) {
+    const searchResults = $("#search-results");
+    searchResults.html("");
+    let newHTML = "";
+    for(const aListing of listings) {
+        let card = `<div class="card">
+            <div class="card-divider">
+                ${aListing.name}
+            </div>
+            <img width="220" src="https://images-na.ssl-images-amazon.com/images/I/51UiI6CdvmL._SX340_BO1,204,203,200_.jpg">
+            <div class="card-section">
+                <p>Price: \$${aListing.price}</p>
+                <p>Professor: ${aListing.professor}</p>
+            </div>
+        </div>`;
+        newHTML += card;
+    }
+    searchResults.html(newHTML);
+}
+
+function getSearchScores(listings, searchString) {
+    const threshold = 20;
+    let searchResults = [];
+    // console.log("listings:");
+    // console.log(listings);
+    for(const aListing of listings) {
+        const score = alignmentScore(aListing["name"], searchString);
+        console.log("score:");
+        console.log(score);
+        console.log("for " + aListing["name"] + ", " + searchString);
+        if(score < threshold) {
+            searchResults.push([score, aListing]);
+        }
+    }
+    searchResults.sort(function(a, b){return b[0] - a[0]});
+    // console.log("searchResults:");
+    // console.log(searchResults);
+    let matchingListings = [];
+    for(const aResult of searchResults) {
+        matchingListings.push(aResult[1]);
+    }
+    displaySearchResults(matchingListings);
+}
+
+function searchListings() {
+    const searchString = $("#book-name-search-box").val();
+    db.collection("listings").get().then(function (querySnapshot) {
+        let listings = [];
+        querySnapshot.forEach(function (doc) {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+            let json = doc.data();
+            if (json['name'] !== undefined) {
+                listings.push(json);
+            }
+        });
+        getSearchScores(listings, searchString);
+    });
+}
