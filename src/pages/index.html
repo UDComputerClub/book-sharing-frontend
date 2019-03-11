@@ -4,102 +4,113 @@
 <!--<p id="sign-in"></p>-->
 <!--<p>account-details:</p>-->
 <!--<p id="account-details"></p>-->
-<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
-<div class="grid-container">
-<ul class="tabs" data-deep-link="true" data-tabs id="main-tabs">
-    <li class="tabs-title is-active"><a href="#list-panel" aria-selected="true">List a Book</a></li>
-    <li class="tabs-title"><a data-tabs-target="find-panel" href="#find-panel">Find a Book</a></li>
-    <li class="tabs-title"><a data-tabs-target="new-panel" href="#new-panel">New Listings</a></li>
-</ul>
-<div class="tabs-content" data-tabs-content="main-tabs">
-    <div class="tabs-panel is-active" id="list-panel">
-        <h4>Create New Book Listing</h4>
-        <form>
-            <div class="grid-container">
-                <div class="grid-x grid-padding-x">
-                    <div class="medium-6 cell">
-                        <label>Enter Book Name
-                            <input type="text" placeholder="Book Name" id="book-name">
-                        </label>
-                        <label>Enter Professor (optional)
-                            <input type="text" placeholder="Professor" id="professor">
-                        </label>
-                        <label>Enter Price
-                            <input type="number" placeholder="Price" id="price">
-                        </label>
-                    </div>
+<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css"/>
+<div class="grid-container fluid">
+    <div class="grid-x">
+        <div class="cell hide-for-small-only medium-2 large-3"></div>
+        <div class="cell small-12 medium-8 large-6">
+            <h1>UD Book Sharing</h1>
+            <ul class="tabs" data-deep-link="true" data-tabs id="main-tabs">
+                <li class="tabs-title is-active"><a href="#list-panel" aria-selected="true">List a Book</a></li>
+                <li class="tabs-title"><a data-tabs-target="find-panel" href="#find-panel">Find a Book</a></li>
+                <li class="tabs-title"><a data-tabs-target="new-panel" href="#new-panel">New Listings</a></li>
+            </ul>
+            <div class="tabs-content" data-tabs-content="main-tabs">
+                <div class="tabs-panel is-active" id="list-panel">
+                    <h4>Create New Book Listing</h4>
+                    <form>
+                        <div class="grid-container">
+                            <div class="grid-x grid-padding-x">
+                                <div class="medium-6 cell">
+                                    <label>Enter Book Name
+                                        <input type="text" placeholder="Book Name" id="book-name">
+                                    </label>
+                                    <label>Enter Professor (optional)
+                                        <input type="text" placeholder="Professor" id="professor">
+                                    </label>
+                                    <label>Enter Price
+                                        <input type="number" placeholder="Price" id="price">
+                                    </label>
+                                </div>
+                            </div>
+                            <a class="button" id="create-listing-button">Create Listing</a>
+                            <p>Later, this form will just be the book name and this search button. the user will enter
+                                their
+                                query and be shown a list of books, then given the option to choose one or make a new
+                                book
+                                name.</p>
+                            <a class="button">Search</a>
+                            <div id="firebaseui-auth-container"></div>
+                        </div>
+                    </form>
                 </div>
-                <a class="button" id="create-listing-button">Create Listing</a>
-                <p>Later, this form will just be the book name and this search button. the user will enter their query and be shown a list of books, then given the option to choose one or make a new book name.</p>
-                <a class="button">Search</a>
-                <div id="firebaseui-auth-container"></div>
-            </div>
-        </form>
-    </div>
-    <div class="tabs-panel" id="find-panel">
-        <h4>Find Your Book</h4>
-        <form>
-            <div class="grid-container">
-                <div class="grid-x grid-padding-x">
-                    <div class="medium-6 cell">
-                        <label>Search by Book Name
-                            <input type="text" id="book-name-search-box" placeholder="Book Name">
-                        </label>
-                    </div>
+                <div class="tabs-panel" id="find-panel">
+                    <h4>Find Your Book</h4>
+                    <form>
+                        <div class="grid-container">
+                            <div class="grid-x grid-padding-x">
+                                <div class="medium-6 cell">
+                                    <label>Search by Book Name
+                                        <input type="text" id="book-name-search-box" placeholder="Book Name">
+                                    </label>
+                                </div>
+                            </div>
+                            <a class="button" id="listing-search-button">Search</a>
+                        </div>
+                    </form>
+                    <div id="search-results"></div>
+                    <!--<p>Maybe delete:</p>-->
+                    <!--<label>Major-->
+                    <!--<select>-->
+                    <!--<option value="computer-science">Computer Science</option>-->
+                    <!--<option value="math">Math</option>-->
+                    <!--<option value="philosophy">Philosophy</option>-->
+                    <!--<option value="psychology">Psychology</option>-->
+                    <!--</select>-->
+                    <!--</label>-->
+                    <!--<label>Class-->
+                    <!--<select>-->
+                    <!--<option value="computer-science">Software Engineering</option>-->
+                    <!--<option value="math">Intro CS</option>-->
+                    <!--<option value="philosophy">Networking</option>-->
+                    <!--<option value="psychology">Databases</option>-->
+                    <!--</select>-->
+                    <!--</label>-->
+                    <!--<label>Professor-->
+                    <!--<select>-->
+                    <!--<option value="hochberg">Hochberg</option>-->
+                    <!--<option value="not-hochberg">Not Hochberg</option>-->
+                    <!--<option value="russell">Russell</option>-->
+                    <!--<option value="andrews">Andrews</option>-->
+                    <!--</select>-->
+                    <!--</label>-->
+                    <!--<a class="button primary" href="#">Search</a>-->
                 </div>
-                <a class="button" id="listing-search-button">Search</a>
-                <div id="search-results"></div>
+                <div class="tabs-panel new-postings" id="new-panel">
+                    <h4>Recent Listings</h4>
+                    <a class="button" id="new-listings-refresh-button">Refresh</a>
+                    <div id="new-listings"></div>
+                    <!--<div class="card">-->
+                    <!--<div class="card-divider">-->
+                    <!--Modern Operating Systems-->
+                    <!--</div>-->
+                    <!--<img width="220" src="https://images-na.ssl-images-amazon.com/images/I/51UiI6CdvmL._SX340_BO1,204,203,200_.jpg">-->
+                    <!--<div class="card-section">-->
+                    <!--<p>$42.00</p>-->
+                    <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="card">-->
+                    <!--<div class="card-divider">-->
+                    <!--Modern Operating Systems-->
+                    <!--</div>-->
+                    <!--<img width="220" src="https://images-na.ssl-images-amazon.com/images/I/51UiI6CdvmL._SX340_BO1,204,203,200_.jpg">-->
+                    <!--<div class="card-section">-->
+                    <!--<p>$42.00</p>-->
+                    <!--</div>-->
+                    <!--</div>-->
+                </div>
             </div>
-        </form>
-        <!--<p>Maybe delete:</p>-->
-        <!--<label>Major-->
-            <!--<select>-->
-                <!--<option value="computer-science">Computer Science</option>-->
-                <!--<option value="math">Math</option>-->
-                <!--<option value="philosophy">Philosophy</option>-->
-                <!--<option value="psychology">Psychology</option>-->
-            <!--</select>-->
-        <!--</label>-->
-        <!--<label>Class-->
-            <!--<select>-->
-                <!--<option value="computer-science">Software Engineering</option>-->
-                <!--<option value="math">Intro CS</option>-->
-                <!--<option value="philosophy">Networking</option>-->
-                <!--<option value="psychology">Databases</option>-->
-            <!--</select>-->
-        <!--</label>-->
-        <!--<label>Professor-->
-            <!--<select>-->
-                <!--<option value="hochberg">Hochberg</option>-->
-                <!--<option value="not-hochberg">Not Hochberg</option>-->
-                <!--<option value="russell">Russell</option>-->
-                <!--<option value="andrews">Andrews</option>-->
-            <!--</select>-->
-        <!--</label>-->
-        <!--<a class="button primary" href="#">Search</a>-->
+        </div>
+        <div class="cell hide-for-small-only medium-2 large-3"></div>
     </div>
-    <div class="tabs-panel new-postings" id="new-panel">
-        <h4>Recent Listings</h4>
-        <a class="button" id="new-listings-refresh-button">Refresh</a>
-        <div id="new-listings"></div>
-        <!--<div class="card">-->
-            <!--<div class="card-divider">-->
-                <!--Modern Operating Systems-->
-            <!--</div>-->
-            <!--<img width="220" src="https://images-na.ssl-images-amazon.com/images/I/51UiI6CdvmL._SX340_BO1,204,203,200_.jpg">-->
-            <!--<div class="card-section">-->
-                <!--<p>$42.00</p>-->
-            <!--</div>-->
-        <!--</div>-->
-        <!--<div class="card">-->
-            <!--<div class="card-divider">-->
-                <!--Modern Operating Systems-->
-            <!--</div>-->
-            <!--<img width="220" src="https://images-na.ssl-images-amazon.com/images/I/51UiI6CdvmL._SX340_BO1,204,203,200_.jpg">-->
-            <!--<div class="card-section">-->
-                <!--<p>$42.00</p>-->
-            <!--</div>-->
-        <!--</div>-->
-    </div>
-</div>
 </div>

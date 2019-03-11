@@ -1,0 +1,9 @@
+body {
+    background-color: #e2dccd;
+    background: url("../img/background.jpg") no-repeat center center fixed;
+    background-color: #e2dccd;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}

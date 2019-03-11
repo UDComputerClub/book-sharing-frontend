@@ -13,7 +13,6 @@ require('foundation-sites');
 // the line below
 //import './lib/foundation-explicit-pieces';
 
-
 $(document).foundation();
 
 const firebase = require('firebase/app');
@@ -124,7 +123,6 @@ const ui = new firebaseui.auth.AuthUI(firebase.auth());
 // The start method will wait until the DOM is loaded.
 ui.start('#firebaseui-auth-container', uiConfig);
 
-
 function initApp() {
     firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
@@ -168,9 +166,6 @@ window.addEventListener('load', function () {
     initApp()
 });
 
-
-
-
 function alignmentScore(string1, string2) {
     const gapScore = 3;
     const swapScore = 2;
@@ -213,10 +208,11 @@ function alignmentScore(string1, string2) {
 }
 
 function displaySearchResults(listings) {
+    const maxToDisplay = 10;
     const searchResults = $("#search-results");
     searchResults.html("");
     let newHTML = "";
-    for(const aListing of listings) {
+    for(const aListing of listings.slice(0, maxToDisplay)) {
         let card = `<div class="card">
             <div class="card-divider">
                 ${aListing.name}
