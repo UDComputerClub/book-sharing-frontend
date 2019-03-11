@@ -1,9 +1,9 @@
-<p>sign-in-status:</p>
-<p id="sign-in-status"></p>
-<p>sign-in:</p>
-<p id="sign-in"></p>
-<p>account-details:</p>
-<p id="account-details"></p>
+<!--<p>sign-in-status:</p>-->
+<!--<p id="sign-in-status"></p>-->
+<!--<p>sign-in:</p>-->
+<!--<p id="sign-in"></p>-->
+<!--<p>account-details:</p>-->
+<!--<p id="account-details"></p>-->
 <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
 <div class="grid-container">
 <ul class="tabs" data-deep-link="true" data-tabs id="main-tabs">
@@ -80,6 +80,8 @@
     </div>
     <div class="tabs-panel new-postings" id="new-panel">
         <h4>Recent Listings</h4>
+        <a class="button" id="new-listings-refresh-button">Refresh</a>
+        <div id="new-listings"></div>
         <!--<div class="card">-->
             <!--<div class="card-divider">-->
                 <!--Modern Operating Systems-->

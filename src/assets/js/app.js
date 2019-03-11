@@ -30,26 +30,39 @@ let config = {
     storageBucket: "booksharing-40ba7.appspot.com",
     messagingSenderId: "606585176318"
 };
+
 firebase.initializeApp(config);
 let db = firebase.firestore();
-db.collection("listings").get().then(function (querySnapshot) {
-    querySnapshot.forEach(function (doc) {
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
-        let json = doc.data();
-        let name = '';
-        if (json['name'] !== undefined) {
-            name = json['name'];
-        }
-        let professor = '';
-        if (json['professor'] !== undefined) {
-            professor = json['professor'];
-        }
-        let price = '';
-        if (json['price'] !== undefined) {
-            price = json['price'];
-        }
-        let card = `<div class="card">
+
+$("#create-listing-button").click(postListing);
+$("#listing-search-button").click(searchListings);
+$("#new-listings-refresh-button").click(getRecentListings);
+$(document).ready(getRecentListings);
+
+function getRecentListings() {
+    const maxToGet = 10;
+    db.collection("listings").orderBy("timestamp", "desc").limit(maxToGet).get()
+        .then(function (querySnapshot) {
+            const newListings = $("#new-listings");
+            newListings.html("");
+            let newHTML = "";
+            querySnapshot.forEach(function (doc) {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                let json = doc.data();
+                let name = '';
+                if (json['name'] !== undefined) {
+                    name = json['name'];
+                }
+                let professor = '';
+                if (json['professor'] !== undefined) {
+                    professor = json['professor'];
+                }
+                let price = '';
+                if (json['price'] !== undefined) {
+                    price = json['price'];
+                }
+                let card = `<div class="card">
             <div class="card-divider">
                 ${name}
             </div>
@@ -59,9 +72,11 @@ db.collection("listings").get().then(function (querySnapshot) {
                 <p>Professor: ${professor}</p>
             </div>
         </div>`;
-        $('.new-postings').append(card);
-    });
-});
+                newHTML += card;
+            });
+            newListings.html(newHTML);
+        });
+}
 
 let userInfo;
 
@@ -69,6 +84,7 @@ function postListing() {
     // Add a new document with a generated id.
     db.collection("/listings").add({
         uid: userInfo.uid,
+        timestamp: Date.now(),
         name: $("#book-name").val(),
         professor: $("#professor").val(),
         price: $("#price").val()
@@ -80,9 +96,6 @@ function postListing() {
             console.error("Error writing document: ", error);
         });
 }
-
-$("#create-listing-button").click(postListing);
-$("#listing-search-button").click(searchListings);
 
 // FirebaseUI config.
 const uiConfig = {
@@ -125,26 +138,26 @@ function initApp() {
             const phoneNumber = user.phoneNumber;
             const providerData = user.providerData;
             user.getIdToken().then(function (accessToken) {
-                $("#sign-in-status").html('Signed in');
-                $("#sign-in").html('Sign out');
-                $("#account-details").html(
-                    JSON.stringify({
-                        displayName: displayName,
-                        email: email,
-                        emailVerified: emailVerified,
-                        phoneNumber: phoneNumber,
-                        photoURL: photoURL,
-                        uid: uid,
-                        accessToken: accessToken,
-                        providerData: providerData
-                    }, null, '  ')
-                );
+                // $("#sign-in-status").html('Signed in');
+                // $("#sign-in").html('Sign out');
+                // $("#account-details").html(
+                //     JSON.stringify({
+                //         displayName: displayName,
+                //         email: email,
+                //         emailVerified: emailVerified,
+                //         phoneNumber: phoneNumber,
+                //         photoURL: photoURL,
+                //         uid: uid,
+                //         accessToken: accessToken,
+                //         providerData: providerData
+                //     }, null, '  ')
+                // );
             });
         } else {
             // User is signed out.
-            $("#sign-in-status").html('Signed out');
-            $("#sign-in").html('Sign in');
-            $("#account-details").html('null');
+            // $("#sign-in-status").html('Signed out');
+            // $("#sign-in").html('Sign in');
+            // $("#account-details").html('null');
         }
     }, function (error) {
         console.log(error);
@@ -155,7 +168,7 @@ window.addEventListener('load', function () {
     initApp()
 });
 
-//$(document).ready(getBookList);
+
 
 
 function alignmentScore(string1, string2) {
