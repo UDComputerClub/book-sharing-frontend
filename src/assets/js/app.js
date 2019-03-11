@@ -86,15 +86,15 @@ $("#listing-search-button").click(searchListings);
 
 // FirebaseUI config.
 const uiConfig = {
-    signInSuccessUrl: '',
+    signInSuccessUrl: 'http://localhost:63342/book-sharing-frontend/dist/index.html',
     signInOptions: [
         // Leave the lines as is for the providers you want to offer your users.
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-        firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-        firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-        firebase.auth.EmailAuthProvider.PROVIDER_ID,
-        firebase.auth.PhoneAuthProvider.PROVIDER_ID,
-        firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
+        // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+        // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+        // firebase.auth.EmailAuthProvider.PROVIDER_ID,
+        // firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+        // firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
     ],
     // tosUrl and privacyPolicyUrl accept either url string or a callback
     // function.
@@ -164,6 +164,8 @@ function alignmentScore(string1, string2) {
     const matchScore = 0;
     const memos = new Map();
     let bitshiftAmount;
+    const s1 = string1.toLowerCase();
+    const s2 = string2.toLowerCase();
     if (string1.length < string2.length) {
         bitshiftAmount = Math.ceil(Math.log2(string1.length));
         return optimal(string2.length, string1.length);
@@ -171,7 +173,7 @@ function alignmentScore(string1, string2) {
         bitshiftAmount = Math.ceil(Math.log2(string2.length));
     }
     return optimal(string1.length, string2.length);
-    
+
     function optimal(i, j) {
         const bitmask = (i << bitshiftAmount) | j;
         if (memos.has(bitmask)) {
@@ -186,7 +188,7 @@ function alignmentScore(string1, string2) {
         let aScore = optimal(i - 1, j) + gapScore;
         aScore = Math.min(aScore, optimal(i, j - 1) + gapScore);
         let scoreChange = 0;
-        if (string1.charAt(i - 1) === string2.charAt(j - 1)) {
+        if (s1.charAt(i - 1) === s2.charAt(j - 1)) {
             scoreChange = matchScore;
         } else {
             scoreChange = swapScore;
@@ -231,7 +233,7 @@ function getSearchScores(listings, searchString) {
             searchResults.push([score, aListing]);
         }
     }
-    searchResults.sort(function(a, b){return b[0] - a[0]});
+    searchResults.sort(function(a, b){return a[0] - b[0]});
     // console.log("searchResults:");
     // console.log(searchResults);
     let matchingListings = [];
