@@ -42,42 +42,84 @@ $("#listing-search-button").click(searchListings);
 $("#new-listings-refresh-button").click(getRecentListings);
 $(document).ready(getRecentListings);
 
+function addListingCard(listOfListings, currentIndex, jQuerySelector) {
+    if(currentIndex >= listOfListings.length) {
+        return
+    }
+    const aListing = listOfListings[currentIndex];
+    currentIndex++;
+    const name = aListing.name;
+    const professor = aListing.professor;
+    const price = aListing.price;
+    function cardWithImageHTML(imageUrl) {
+        return `<div class="card">
+            <div class="card-divider">
+                ${name}
+            </div>
+            <div class="card-section">
+                <img width="220" src="${imageUrl}">
+                <p>Price: \$${price}</p>
+                <p>Professor: ${professor}</p>
+            </div>
+        </div>`;
+    }
+    function cardWithoutImageHTML() {
+        return `<div class="card">
+            <div class="card-divider">
+                ${name}
+            </div>
+            <div class="card-section">
+                <p>Price: \$${price}</p>
+                <p>Professor: ${professor}</p>
+            </div>
+        </div>`;
+    }
+    if (aListing.image !== undefined) {
+        // Create a reference to the file we want to download
+        const imageRef = storageRef.child(aListing.image);
+        // Get the download URL
+        imageRef.getDownloadURL().then(function(url) {
+            // Insert url into an <img> tag to "download"
+            jQuerySelector.append(cardWithImageHTML(url));
+            addListingCard(listOfListings, currentIndex, jQuerySelector);
+        }).catch(function(error) {
+            // A full list of error codes is available at
+            // https://firebase.google.com/docs/storage/web/handle-errors
+            switch (error.code) {
+                case 'storage/object-not-found':
+                    // File doesn't exist
+                    break;
+                case 'storage/unauthorized':
+                    // User doesn't have permission to access the object
+                    break;
+                case 'storage/canceled':
+                    // User canceled the upload
+                    break;
+                case 'storage/unknown':
+                    // Unknown error occurred, inspect the server response
+                    break;
+            }
+        });
+    }else{
+        jQuerySelector.append(cardWithoutImageHTML());
+        addListingCard(listOfListings, currentIndex, jQuerySelector);
+    }
+}
+
 function getRecentListings() {
     const maxToGet = 10;
     db.collection("listings").orderBy("timestamp", "desc").limit(maxToGet).get()
         .then(function (querySnapshot) {
             const newListings = $("#new-listings");
             newListings.html("");
-            let newHTML = "";
+            let listOfListings = [];
             querySnapshot.forEach(function (doc) {
                 // doc.data() is never undefined for query doc snapshots
                 console.log(doc.id, " => ", doc.data());
-                let json = doc.data();
-                let name = '';
-                if (json['name'] !== undefined) {
-                    name = json['name'];
-                }
-                let professor = '';
-                if (json['professor'] !== undefined) {
-                    professor = json['professor'];
-                }
-                let price = '';
-                if (json['price'] !== undefined) {
-                    price = json['price'];
-                }
-                let card = `<div class="card">
-            <div class="card-divider">
-                ${name}
-            </div>
-            <img width="220" src="https://images-na.ssl-images-amazon.com/images/I/51UiI6CdvmL._SX340_BO1,204,203,200_.jpg">
-            <div class="card-section">
-                <p>Price: \$${price}</p>
-                <p>Professor: ${professor}</p>
-            </div>
-        </div>`;
-                newHTML += card;
+                let aListing = doc.data();
+                listOfListings.push(aListing);
             });
-            newListings.html(newHTML);
+            addListingCard(listOfListings, 0, newListings);
         });
 }
 
@@ -121,7 +163,6 @@ function postListing() {
             addListing(imagePath);
         });
     }else{
-        console.log("not doing image");
         addListing(null);
     }
 }
@@ -241,21 +282,7 @@ function displaySearchResults(listings) {
     const maxToDisplay = 10;
     const searchResults = $("#search-results");
     searchResults.html("");
-    let newHTML = "";
-    for(const aListing of listings.slice(0, maxToDisplay)) {
-        let card = `<div class="card">
-            <div class="card-divider">
-                ${aListing.name}
-            </div>
-            <img width="220" src="https://images-na.ssl-images-amazon.com/images/I/51UiI6CdvmL._SX340_BO1,204,203,200_.jpg">
-            <div class="card-section">
-                <p>Price: \$${aListing.price}</p>
-                <p>Professor: ${aListing.professor}</p>
-            </div>
-        </div>`;
-        newHTML += card;
-    }
-    searchResults.html(newHTML);
+    addListingCard(listings.slice(0, maxToDisplay), 0, searchResults);
 }
 
 function getSearchScores(listings, searchString) {
