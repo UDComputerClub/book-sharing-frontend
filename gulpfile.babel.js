@@ -146,6 +146,12 @@ function images() {
     .pipe(gulp.dest(PATHS.dist + '/assets/img'));
 }
 
+// Copy css to the "dist" folder
+function customCSS() {
+  return gulp.src('src/assets/css/*')
+      .pipe(gulp.dest(PATHS.dist + '/assets/css'));
+}
+
 // Start a server with BrowserSync to preview the site in
 function server(done) {
   browser.init({
@@ -166,7 +172,7 @@ function watch() {
   gulp.watch('src/{layouts,partials}/**/*.html').on('all', gulp.series(resetPages, pages, browser.reload));
   gulp.watch('src/data/**/*.{js,json,yml}').on('all', gulp.series(resetPages, pages, browser.reload));
   gulp.watch('src/helpers/**/*.js').on('all', gulp.series(resetPages, pages, browser.reload));
-  gulp.watch('src/assets/scss/**/*.scss').on('all', sass);
+  gulp.watch('src/assets/scss/**/*.scss').on('all', gulp.series(customCSS, sass));
   gulp.watch('src/assets/css/**/*.css').on('all', gulp.series(browser.reload));
   gulp.watch('src/assets/js/**/*.js').on('all', gulp.series(javascript, browser.reload));
   gulp.watch('src/assets/img/**/*').on('all', gulp.series(images, browser.reload));

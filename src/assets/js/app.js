@@ -57,7 +57,7 @@ function addListingCard(listOfListings, currentIndex, jQuerySelector) {
                 ${name}
             </div>
             <div class="card-section">
-                <img width="220" src="${imageUrl}">
+                <img class="book-image" src="${imageUrl}">
                 <p>Price: \$${price}</p>
                 <p>Professor: ${professor}</p>
             </div>
@@ -115,7 +115,7 @@ function getRecentListings() {
             let listOfListings = [];
             querySnapshot.forEach(function (doc) {
                 // doc.data() is never undefined for query doc snapshots
-                console.log(doc.id, " => ", doc.data());
+                // console.log(doc.id, " => ", doc.data());
                 let aListing = doc.data();
                 listOfListings.push(aListing);
             });
@@ -166,10 +166,18 @@ function postListing() {
         addListing(null);
     }
 }
+console.log(window.location.search);
+const searchParams = new URLSearchParams(window.location.search);
+if (searchParams.has("you")) {
+    console.log(searchParams.get("you"));
+}else{
+    console.log("no u");
+}
 
 // FirebaseUI config.
 const uiConfig = {
-    signInSuccessUrl: 'http://localhost:63342/book-sharing-frontend/dist/index.html',
+    signInSuccessUrl: '/',//http://localhost:63342/book-sharing-frontend/dist/index.html',
+    // signInFlow: 'popup',
     signInOptions: [
         // Leave the lines as is for the providers you want to offer your users.
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,

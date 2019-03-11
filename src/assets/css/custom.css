@@ -15,3 +15,6 @@ body {
 #empty-bottom-space {
     height: 20vh;
 }
+.book-image {
+    max-height: 40vh;
+}
