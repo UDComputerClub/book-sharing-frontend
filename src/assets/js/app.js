@@ -156,47 +156,45 @@ window.addEventListener('load', function () {
 });
 
 //$(document).ready(getBookList);
-const gapScore = 3;
-const swapScore = 2;
-const matchScore = 0;
-const memos = new Map();
-function optimal(bitshift, string1, string2, i, j) {
-    const bitmask = (i << bitshift) | j;
-    if (memos.has(bitmask)) {
-        return memos.get(bitmask);
-    }
-    if (i === 0) {
-        return j * gapScore;
-    }
-    if (j === 0) {
-        return i * gapScore;
-    }
-    let aScore = optimal(bitshift, string1, string2, i - 1, j) + gapScore;
-    aScore = Math.min(aScore, optimal(bitshift, string1, string2, i, j - 1) + gapScore);
-    let scoreChange = 0;
-    if (string1.charAt(i - 1) === string2.charAt(j - 1)) {
-        scoreChange = matchScore;
-    } else {
-        scoreChange = swapScore;
-    }
-    aScore = Math.min(aScore, optimal(bitshift, string1, string2, i - 1, j - 1) + scoreChange);
-    memos.set(bitmask, aScore);
-    return aScore;
-}
+
 
 function alignmentScore(string1, string2) {
-    // console.log("doing a score!");
-    // console.log(string1);
-    // console.log(string2);
-    // console.log(string1.length);
-    // console.log(string2.length);
-    memos.clear();
+    const gapScore = 3;
+    const swapScore = 2;
+    const matchScore = 0;
+    const memos = new Map();
+    let bitshiftAmount;
     if (string1.length < string2.length) {
-        const bitshiftAmount = Math.ceil(Math.log2(string1.length));
-        return optimal(bitshiftAmount, string2, string1, string2.length, string1.length);
+        bitshiftAmount = Math.ceil(Math.log2(string1.length));
+        return optimal(string2.length, string1.length);
+    }else{
+        bitshiftAmount = Math.ceil(Math.log2(string2.length));
     }
-    const bitshiftAmount = Math.ceil(Math.log2(string2.length));
-    return optimal(bitshiftAmount, string1, string2, string1.length, string2.length);
+    return optimal(string1.length, string2.length);
+    
+    function optimal(i, j) {
+        const bitmask = (i << bitshiftAmount) | j;
+        if (memos.has(bitmask)) {
+            return memos.get(bitmask);
+        }
+        if (i === 0) {
+            return j * gapScore;
+        }
+        if (j === 0) {
+            return i * gapScore;
+        }
+        let aScore = optimal(i - 1, j) + gapScore;
+        aScore = Math.min(aScore, optimal(i, j - 1) + gapScore);
+        let scoreChange = 0;
+        if (string1.charAt(i - 1) === string2.charAt(j - 1)) {
+            scoreChange = matchScore;
+        } else {
+            scoreChange = swapScore;
+        }
+        aScore = Math.min(aScore, optimal(i - 1, j - 1) + scoreChange);
+        memos.set(bitmask, aScore);
+        return aScore;
+    }
 }
 
 function displaySearchResults(listings) {
