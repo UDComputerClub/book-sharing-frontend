@@ -17,8 +17,10 @@ $(document).foundation();
 
 const firebase = require('firebase/app');
 const firebaseui = require('firebaseui');
+
 // Required for side-effects
 require("firebase/firestore");
+require("firebase/storage");
 
 // Initialize Firebase
 let config = {
@@ -32,6 +34,8 @@ let config = {
 
 firebase.initializeApp(config);
 let db = firebase.firestore();
+const storageService = firebase.storage();
+const storageRef = storageService.ref();
 
 $("#create-listing-button").click(postListing);
 $("#listing-search-button").click(searchListings);
@@ -80,20 +84,46 @@ function getRecentListings() {
 let userInfo;
 
 function postListing() {
-    // Add a new document with a generated id.
-    db.collection("/listings").add({
+    let theListing = {
         uid: userInfo.uid,
         timestamp: Date.now(),
         name: $("#book-name").val(),
         professor: $("#professor").val(),
-        price: $("#price").val()
-    })
-        .then(function () {
-            console.log("Document successfully written!");
-        })
-        .catch(function (error) {
-            console.error("Error writing document: ", error);
+        price: $("#price").val(),
+    };
+    function addListing(pathToImage) {
+        if (pathToImage !== null) {
+            theListing.image = pathToImage;
+        }
+        // Add a new document with a generated id.
+        db.collection("/listings").add(theListing)
+            .then(function () {
+                console.log("Document successfully written!");
+            })
+            .catch(function (error) {
+                console.error("Error writing document: ", error);
+            });
+    }
+    // for some reason, jquery can't be used for this
+    const imageFiles = document.getElementById("image-upload").files;
+    if (imageFiles !== undefined) {
+        const imageToUpload = imageFiles[0];
+        const imagePath = `images/${imageToUpload.name}`;
+        const uploadTask = storageRef.child(imagePath).put(imageToUpload);
+        uploadTask.on('state_changed', (snapshot) => {
+            // Observe state change events such as progress, pause, and resume
+        }, (error) => {
+            // Handle unsuccessful uploads
+            console.log(error);
+        }, () => {
+            // Do something once upload is complete
+            console.log('success');
+            addListing(imagePath);
         });
+    }else{
+        console.log("not doing image");
+        addListing(null);
+    }
 }
 
 // FirebaseUI config.
@@ -267,3 +297,21 @@ function searchListings() {
         getSearchScores(listings, searchString);
     });
 }
+// let selectedFile;
+// function handleFileUploadChange(e) {
+//     selectedFile = e.target.files[0];
+// }
+// function handleFileUploadSubmit(e) {
+//     const uploadTask = storageRef.child(`images/${selectedFile.name}`).put(selectedFile); //create a child directory called images, and place the file inside this directory
+//     uploadTask.on('state_changed', (snapshot) => {
+//         // Observe state change events such as progress, pause, and resume
+//     }, (error) => {
+//         // Handle unsuccessful uploads
+//         console.log(error);
+//     }, () => {
+//         // Do something once upload is complete
+//         console.log('success');
+//     });
+// }
+// document.querySelector('#image-upload').addEventListener('change', handleFileUploadChange);
+// document.querySelector('.file-submit').addEventListener('click', handleFileUploadSubmit);
