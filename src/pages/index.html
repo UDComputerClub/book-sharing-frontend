@@ -5,11 +5,18 @@
 <!--<p>account-details:</p>-->
 <!--<p id="account-details"></p>-->
 <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css"/>
+<div id="empty-top-space"></div>
 <div class="grid-container fluid">
     <div class="grid-x">
         <div class="cell hide-for-small-only medium-2 large-3"></div>
-        <div class="cell small-12 medium-8 large-6">
-            <h1>UD Book Sharing</h1>
+        <div class="cell small-12 medium-8 large-6" id="main-column">
+            <div class="grid-container">
+                <div class="float-right" id="firebaseui-auth-container"></div>
+                <h6 class="subheader hide-for-small-only">University of Dallas</h6>
+                <h2 class="hide-for-small-only">Book Sharing</h2>
+                <p class="show-for-small-only">Book Sharing</p>
+                <p class="show-for-small-only subheader">Share Books!</p>
+            </div>
             <ul class="tabs" data-deep-link="true" data-tabs id="main-tabs">
                 <li class="tabs-title is-active"><a href="#list-panel" aria-selected="true">List a Book</a></li>
                 <li class="tabs-title"><a data-tabs-target="find-panel" href="#find-panel">Find a Book</a></li>
@@ -31,6 +38,10 @@
                                     <label>Enter Price
                                         <input type="number" placeholder="Price" id="price">
                                     </label>
+                                    <div id="filesubmit">
+                                        <input type="file" class="file-select" accept="image/*"/>
+                                        <button class="file-submit">SUBMIT</button>
+                                    </div>
                                 </div>
                             </div>
                             <a class="button" id="create-listing-button">Create Listing</a>
@@ -40,7 +51,6 @@
                                 book
                                 name.</p>
                             <a class="button">Search</a>
-                            <div id="firebaseui-auth-container"></div>
                         </div>
                     </form>
                 </div>
@@ -87,8 +97,9 @@
                     <!--<a class="button primary" href="#">Search</a>-->
                 </div>
                 <div class="tabs-panel new-postings" id="new-panel">
+                    <a class="button float-right" id="new-listings-refresh-button">Refresh</a>
                     <h4>Recent Listings</h4>
-                    <a class="button" id="new-listings-refresh-button">Refresh</a>
+                    <h6 class="subheader">See all newly available books</h6>
                     <div id="new-listings"></div>
                     <!--<div class="card">-->
                     <!--<div class="card-divider">-->
@@ -114,3 +125,4 @@
         <div class="cell hide-for-small-only medium-2 large-3"></div>
     </div>
 </div>
+<div id="empty-bottom-space"></div>

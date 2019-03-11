@@ -5,3 +5,13 @@ body {
     -o-background-size: cover;
     background-size: cover;
 }
+#main-column {
+    background-color: #fefefe;
+    padding-top: 15px;
+}
+#empty-top-space {
+    height: 10vh;
+}
+#empty-bottom-space {
+    height: 20vh;
+}
