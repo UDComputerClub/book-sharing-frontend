@@ -44,7 +44,6 @@ function addListingCard(listOfListings, currentIndex, jQuerySelector) {
         return
     }
     const aListing = listOfListings[currentIndex];
-    console.log(aListing);
     currentIndex++;
     const name = aListing.name === undefined ? "" : aListing.name;
     const sellingPrice = aListing.sellingPrice === undefined ? "" : "$" + aListing.sellingPrice;
@@ -59,7 +58,10 @@ function addListingCard(listOfListings, currentIndex, jQuerySelector) {
             </div>
             <div class="card-section">`;
         if (imageUrl !== null) {
-            theHTML += `<img class="book-image" src="${imageUrl}">`;
+            theHTML += `<div class="grid-container">
+                            <img class="book-image float-center" src="${imageUrl}">
+                        </div>
+                        <p></p>`;
         }
         theHTML += `<table class="unstriped show-for-medium">
                     <thead>
@@ -114,77 +116,6 @@ function addListingCard(listOfListings, currentIndex, jQuerySelector) {
                 </table>`;
         }
         theHTML += `</div></div>`;
-        //
-        //         `<table class="unstriped show-for-medium show-for-small">
-        //             <thead>
-        //             <tr>
-        //                 <th>Buy</th>
-        //                 <th>Rent</th>
-        //                 <th>Contact</th>
-        //             </tr>
-        //             </thead>
-        //             <tbody>
-        //             <tr>
-        //                 <td>${sellingPrice}</td>
-        //                 <td>${rentalPrice}</td>
-        //                 <td>${contactInfo}</td>
-        //             </tr>
-        //             </tbody>
-        //         </table>`;
-        //         `<img class="book-image" src="${imageUrl}">
-        //         <p></p>
-        //         <table class="unstriped show-for-large-only">
-        //             <thead>
-        //             <tr>
-        //                 <th>Buy</th>
-        //                 <th>Rent</th>
-        //                 <th>Class</th>
-        //                 <th>Professor</th>
-        //                 <th>Contact</th>
-        //             </tr>
-        //             </thead>
-        //             <tbody>
-        //             <tr>
-        //                 <td>${sellingPrice}</td>
-        //                 <td>${rentalPrice}</td>
-        //                 <td>${theClassName}</td>
-        //                 <td>${professor}</td>
-        //                 <td>${contactInfo}</td>
-        //             </tr>
-        //             </tbody>
-        //         </table>
-        //         <table class="unstriped show-for-medium show-for-small">
-        //             <thead>
-        //             <tr>
-        //                 <th>Buy</th>
-        //                 <th>Rent</th>
-        //                 <th>Contact</th>
-        //             </tr>
-        //             </thead>
-        //             <tbody>
-        //             <tr>
-        //                 <td>${sellingPrice}</td>
-        //                 <td>${rentalPrice}</td>
-        //                 <td>${contactInfo}</td>
-        //             </tr>
-        //             </tbody>
-        //         </table>
-        //         <table class="unstriped show-for-medium show-for-small">
-        //             <thead>
-        //             <tr>
-        //                 <th>Class</th>
-        //                 <th>Professor</th>
-        //             </tr>
-        //             </thead>
-        //             <tbody>
-        //             <tr>
-        //                 <td>${theClassName}</td>
-        //                 <td>${professor}</td>
-        //             </tr>
-        //             </tbody>
-        //         </table>
-        //     </div>
-        // </div>`;
         return theHTML;
     }
     if (aListing.image !== undefined) {
@@ -224,6 +155,44 @@ function getRecentListings() {
     db.collection("listings").orderBy("timestamp", "desc").limit(maxToGet).get()
         .then(function (querySnapshot) {
             const newListings = $("#new-listings");
+            newListings.html("");
+            let listOfListings = [];
+            querySnapshot.forEach(function (doc) {
+                // doc.data() is never undefined for query doc snapshots
+                // console.log(doc.id, " => ", doc.data());
+                let aListing = doc.data();
+                listOfListings.push(aListing);
+            });
+            addListingCard(listOfListings, 0, newListings);
+        });
+}
+
+function initializeSearchResults() {
+    const maxToGet = 10;
+    db.collection("listings").orderBy("timestamp", "desc").limit(maxToGet).get()
+        .then(function (querySnapshot) {
+            const newListings = $("#search-results");
+            newListings.html("");
+            let listOfListings = [];
+            querySnapshot.forEach(function (doc) {
+                // doc.data() is never undefined for query doc snapshots
+                // console.log(doc.id, " => ", doc.data());
+                let aListing = doc.data();
+                listOfListings.push(aListing);
+            });
+            addListingCard(listOfListings, 0, newListings);
+        });
+}
+
+
+function getUserListings() {
+    const maxToGet = 20;
+    db.collection("listings")
+        .where("uid", "==", userInfo.uid)
+        .orderBy("timestamp", "desc")
+        .limit(maxToGet).get()
+        .then(function (querySnapshot) {
+            const newListings = $("#user-listings");
             newListings.html("");
             let listOfListings = [];
             querySnapshot.forEach(function (doc) {
@@ -376,6 +345,7 @@ function removeAlert(elementId) {
     element.style.backgroundColor = inputBackgroundColor;
 }
 
+
 function initApp() {
     $("#create-listing-button").click(postListing);
     $("#listing-search-button").click(searchListings);
@@ -403,7 +373,11 @@ function initApp() {
     $("#contact-info").change(function(){
         removeAlert("contact-info");
     });
-    $(document).ready(getRecentListings);
+    function initializeListings() {
+        getRecentListings();
+        initializeSearchResults();
+    }
+    $(document).ready(initializeListings);
 
     firebase.auth().onAuthStateChanged(function (user) {
         if (user && user.email.endsWith("@udallas.edu")) {
@@ -429,6 +403,8 @@ function initApp() {
             } else {
                 photoElement.style.display = 'none';
             }
+            // show the user's recent listings
+            getUserListings();
         } else {
             // User is signed out. Redirect to login page.
             window.location.assign('/login.html');
