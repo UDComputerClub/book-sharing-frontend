@@ -39,24 +39,45 @@ let db = firebase.firestore();
 const storageService = firebase.storage();
 const storageRef = storageService.ref();
 
+function deleteListing(listingUid) {
+    console.log(listingUid);
+    const listingRef = db.collection("listings").doc(listingUid);
+    listingRef.set({
+        deleted: true
+    }, { merge: true })
+        .then(function() {
+            console.log("Document successfully deleted!");
+            $("." + listingUid + ".card").remove();
+    });
+}
+
 function addListingCard(listOfListings, currentIndex, jQuerySelector) {
     if(currentIndex >= listOfListings.length) {
         return
     }
     const aListing = listOfListings[currentIndex];
     currentIndex++;
+    if (aListing.deleted !== undefined && aListing.deleted) {
+        addListingCard(listOfListings, currentIndex, jQuerySelector);
+        return;
+    }
     const name = aListing.name === undefined ? "" : aListing.name;
     const sellingPrice = aListing.sellingPrice === undefined ? "" : "$" + aListing.sellingPrice;
     const rentalPrice = aListing.rentalPrice === undefined ? "" : "$" + aListing.rentalPrice;
     const theClassName = aListing.theClassName === undefined ? "" : aListing.theClassName;
     const professor = aListing.professor === undefined ? "" : aListing.professor;
     const contactInfo = aListing.contactInfo === undefined ? "" : aListing.contactInfo;
-    function cardHTML(imageUrl) {
-        let theHTML = `<div class="card">
+    function addCardHTML(imageUrl) {
+        let isUserCard = false;
+        let theHTML = `<div class="${aListing.docId} card">
             <div class="card-divider">
                 <h4>${name}</h4>
             </div>
             <div class="card-section">`;
+        if (userInfo !== undefined && userInfo.uid === aListing.uid) {
+            isUserCard = true;
+            theHTML += `<a class="alert button float-right" id="${aListing.docId}">Delete</a>`;
+        }
         if (imageUrl !== null) {
             theHTML += `<div class="grid-container">
                             <img class="book-image float-center" src="${imageUrl}">
@@ -116,7 +137,12 @@ function addListingCard(listOfListings, currentIndex, jQuerySelector) {
                 </table>`;
         }
         theHTML += `</div></div>`;
-        return theHTML;
+        jQuerySelector.append(theHTML);
+        if (isUserCard) {
+            $("#" + aListing.docId).click(function() {
+                deleteListing(aListing.docId);
+            })
+        }
     }
     if (aListing.image !== undefined) {
         // Create a reference to the file we want to download
@@ -124,7 +150,7 @@ function addListingCard(listOfListings, currentIndex, jQuerySelector) {
         // Get the download URL
         imageRef.getDownloadURL().then(function(url) {
             // Insert url into an <img> tag to "download"
-            jQuerySelector.append(cardHTML(url));
+            addCardHTML(url);
             addListingCard(listOfListings, currentIndex, jQuerySelector);
         }).catch(function(error) {
             // A full list of error codes is available at
@@ -145,7 +171,7 @@ function addListingCard(listOfListings, currentIndex, jQuerySelector) {
             }
         });
     }else{
-        jQuerySelector.append(cardHTML(null));
+        addCardHTML(null);
         addListingCard(listOfListings, currentIndex, jQuerySelector);
     }
 }
@@ -161,6 +187,7 @@ function getRecentListings() {
                 // doc.data() is never undefined for query doc snapshots
                 // console.log(doc.id, " => ", doc.data());
                 let aListing = doc.data();
+                aListing.docId = doc.id;
                 listOfListings.push(aListing);
             });
             addListingCard(listOfListings, 0, newListings);
@@ -178,12 +205,12 @@ function initializeSearchResults() {
                 // doc.data() is never undefined for query doc snapshots
                 // console.log(doc.id, " => ", doc.data());
                 let aListing = doc.data();
+                aListing.docId = doc.id;
                 listOfListings.push(aListing);
             });
             addListingCard(listOfListings, 0, newListings);
         });
 }
-
 
 function getUserListings() {
     const maxToGet = 20;
@@ -199,6 +226,7 @@ function getUserListings() {
                 // doc.data() is never undefined for query doc snapshots
                 // console.log(doc.id, " => ", doc.data());
                 let aListing = doc.data();
+                aListing.docId = doc.id;
                 listOfListings.push(aListing);
             });
             addListingCard(listOfListings, 0, newListings);
@@ -345,11 +373,11 @@ function removeAlert(elementId) {
     element.style.backgroundColor = inputBackgroundColor;
 }
 
-
 function initApp() {
     $("#create-listing-button").click(postListing);
     $("#listing-search-button").click(searchListings);
     $("#new-listings-refresh-button").click(getRecentListings);
+    $("#user-listings-refresh-button").click(getUserListings);
     $("#sign-out-button").click(signOut);
     $("#sell").click(function() {
         $("#selling-price").removeAttr("disabled");
