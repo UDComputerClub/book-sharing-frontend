@@ -23,22 +23,43 @@
                         <div class="grid-container">
                             <div class="grid-x grid-padding-x">
                                 <div class="medium-6 cell">
-                                    <label>Enter Book Name
+                                    <label>Enter Book Name (required)
                                         <input type="text" placeholder="Book Name" id="book-name">
                                     </label>
                                     <label>Enter Professor (optional)
                                         <input type="text" placeholder="Professor" id="professor">
                                     </label>
-                                    <label>Enter Price
-                                        <input type="number" placeholder="Price" id="price">
+                                    <label>Enter Class Name (optional)
+                                        <input type="text" placeholder="Class Name" id="class-name">
                                     </label>
+                                    <fieldset class="fieldset">
+                                        <legend>Are you selling or renting?</legend>
+                                        <input type="radio" name="listing-type" value="Sell" id="sell" checked><label for="sell">Sell</label>
+                                        <input type="radio" name="listing-type" value="Rent" id="rent"><label for="rent">Rent</label>
+                                        <input type="radio" name="listing-type" value="Rent or sell" id="rent-or-sell"><label for="rent-or-sell">Rent or sell</label>
+                                    </fieldset>
+                                    <p>Enter Price (put $0 if the book is free)</p>
+                                    <div class="input-group">
+                                        <span class="input-group-label">$</span>
+                                        <input class="input-group-field" type="number" placeholder="Selling Price" id="selling-price">
+                                    </div>
+                                    <div class="input-group">
+                                        <span class="input-group-label">$</span>
+                                        <input class="input-group-field" type="number" placeholder="Rental Price" id="rental-price" disabled>
+                                    </div>
                                     <label>Add a picture of the book (optional)
-                                        <input type="file" accept="image/*" id="image-upload"/>
+                                        <label for="image-upload" class="button">Upload Photo</label>
+                                        <input type="file" accept="image/*" id="image-upload" class="show-for-sr">
+                                    </label>
+                                    <label>How can buyers contact you? (required)
+                                        <input type="text" placeholder="Phone number, email address, FB profile" id="contact-info">
                                     </label>
                                 </div>
                             </div>
-                            <a class="button" id="create-listing-button">Create Listing</a>
+                            <p id="invalid-form-warning" style="color: #d4485b"></p>
+                            <p id="listing-post-result"></p>
                         </div>
+                        <a class="button" id="create-listing-button">Create Listing</a>
                     </form>
                 </div>
                 <div class="tabs-panel" id="find-panel">

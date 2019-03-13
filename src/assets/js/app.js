@@ -44,6 +44,7 @@ function addListingCard(listOfListings, currentIndex, jQuerySelector) {
         return
     }
     const aListing = listOfListings[currentIndex];
+    console.log(aListing);
     currentIndex++;
     const name = aListing.name;
     const professor = aListing.professor;
@@ -55,6 +56,7 @@ function addListingCard(listOfListings, currentIndex, jQuerySelector) {
             </div>
             <div class="card-section">
                 <img class="book-image" src="${imageUrl}">
+                <p></p>
                 <p>Price: \$${price}</p>
                 <p>Professor: ${professor}</p>
             </div>
@@ -121,13 +123,73 @@ function getRecentListings() {
 }
 
 function postListing() {
+    const createListingButton = $("#create-listing-button");
+    createListingButton.attr("disabled", "disabled");
+    const bookName = $.trim($("#book-name").val());
+    const contactInfo = $.trim($("#contact-info").val());
+    let validInput = true;
+    if (bookName === "") {
+        validInput = false;
+        addAlert("book-name");
+    }
+    if (contactInfo === "") {
+        validInput = false;
+        addAlert("contact-info");
+    }
+    if (!validInput) {
+        $("#invalid-form-warning").html("Please enter all required info");
+        createListingButton.removeAttr("disabled");
+        return;
+    }
     let theListing = {
         uid: userInfo.uid,
         timestamp: Date.now(),
-        name: $("#book-name").val(),
-        professor: $("#professor").val(),
-        price: $("#price").val(),
+        name: bookName,
+        contactInfo: contactInfo,
     };
+    const professor = $.trim($("#professor").val());
+    if (professor !== "") {
+        theListing.professor = professor;
+    }
+    const className = $.trim($("#class-name").val());
+    if (className !== "") {
+        theListing.className = className;
+    }
+    const sellRadio = $("#sell");
+    const rentRadio = $("#rent");
+    const rentOrSellRadio = $("#rent-or-sell");
+    let sellingPrice = $("#selling-price").val();
+    let rentalPrice = $("#rental-price").val();
+    if (sellingPrice === "") {
+        sellingPrice = 0;
+    }
+    if (rentalPrice === "") {
+        rentalPrice = 0;
+    }
+    if (rentOrSellRadio.is(":checked")) {
+        theListing.sellingPrice = sellingPrice;
+        theListing.rentalPrice = rentalPrice;
+    }else if (sellRadio.is(":checked")) {
+        theListing.sellingPrice = sellingPrice;
+    }else if (rentRadio.is(":checked")) {
+        theListing.rentalPrice = rentalPrice;
+    }else{
+        console.log("could not find checked radio");
+    }
+
+    function postListingSuccess() {
+        createListingButton.removeAttr("disabled");
+        $("#listing-post-result").html("Successfully Created Listing!");
+        document.getElementById("listing-post-result").style.color = "#228440";
+        $("#book-name").val("");
+    }
+
+    function postListingError() {
+        createListingButton.removeAttr("disabled");
+        $("#listing-post-result").html("Could not create listing");
+        document.getElementById("listing-post-result").style.color = "#ff3d43";
+    }
+
     function addListing(pathToImage) {
         if (pathToImage !== null) {
             theListing.image = pathToImage;
@@ -135,22 +197,25 @@ function postListing() {
         // Add a new document with a generated id.
         db.collection("/listings").add(theListing)
             .then(function () {
+                postListingSuccess();
                 console.log("Document successfully written!");
             })
             .catch(function (error) {
+                postListingError();
                 console.error("Error writing document: ", error);
             });
     }
     // for some reason, jquery can't be used for this
-    const imageFiles = document.getElementById("image-upload").files[0];
-    if (imageFiles !== undefined) {
-        const imageToUpload = imageFiles[0];
+    const imageToUpload = document.getElementById("image-upload").files[0];
+    if (imageToUpload !== undefined) {
+        //const imageToUpload = imageFiles[0];
         const imagePath = `images/${imageToUpload.name}`;
         const uploadTask = storageRef.child(imagePath).put(imageToUpload);
         uploadTask.on('state_changed', (snapshot) => {
             // Observe state change events such as progress, pause, and resume
         }, (error) => {
             // Handle unsuccessful uploads
+            postListingError();
             console.log(error);
         }, () => {
             // Do something once upload is complete
@@ -184,11 +249,46 @@ function initLoginPage() {
     ui.start('#firebaseui-auth-container', uiConfig);
 }
 
+let inputBackgroundColor;
+const alertBackgroundColor = "#fff2f9";
+
+function addAlert(elementId) {
+    const element = document.getElementById(elementId);
+    element.style.backgroundColor = alertBackgroundColor;
+}
+
+function removeAlert(elementId) {
+    const element = document.getElementById(elementId);
+    element.style.backgroundColor = inputBackgroundColor;
+}
+
 function initApp() {
     $("#create-listing-button").click(postListing);
     $("#listing-search-button").click(searchListings);
     $("#new-listings-refresh-button").click(getRecentListings);
     $("#sign-out-button").click(signOut);
+    $("#sell").click(function() {
+        $("#selling-price").removeAttr("disabled");
+        $("#rental-price").attr("disabled", "disabled");
+    });
+    $("#rent").click(function() {
+        $("#rental-price").removeAttr("disabled");
+        $("#selling-price").attr("disabled", "disabled");
+    });
+    $("#rent-or-sell").click(function() {
+        $("#rental-price").removeAttr("disabled");
+        $("#selling-price").removeAttr("disabled");
+    });
+    const sampleInput = document.getElementById("book-name");
+    inputBackgroundColor = sampleInput.style.backgroundColor;
+    $("#book-name").change(function(){
+        $("#invalid-form-warning").html("");
+        $("#listing-post-result").html("");
+        removeAlert("book-name");
+    });
+    $("#contact-info").change(function(){
+        removeAlert("contact-info");
+    });
     $(document).ready(getRecentListings);
 
     firebase.auth().onAuthStateChanged(function (user) {
