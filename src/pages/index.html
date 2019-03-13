@@ -1,9 +1,3 @@
-<!--<p>sign-in-status:</p>-->
-<!--<p id="sign-in-status"></p>-->
-<!--<p>sign-in:</p>-->
-<!--<p id="sign-in"></p>-->
-<!--<p>account-details:</p>-->
-<!--<p id="account-details"></p>-->
 <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css"/>
 <div id="empty-top-space"></div>
 <div class="grid-container fluid">
@@ -11,7 +5,6 @@
         <div class="cell hide-for-small-only medium-2 large-3"></div>
         <div class="cell small-12 medium-8 large-6" id="main-column">
             <div class="grid-container">
-                <div class="float-right" id="firebaseui-auth-container"></div>
                 <h6 class="subheader hide-for-small-only">University of Dallas</h6>
                 <h2 class="hide-for-small-only">Book Sharing</h2>
                 <p class="show-for-small-only">Book Sharing</p>
@@ -21,6 +14,7 @@
                 <li class="tabs-title is-active"><a href="#list-panel" aria-selected="true">List a Book</a></li>
                 <li class="tabs-title"><a data-tabs-target="find-panel" href="#find-panel">Find a Book</a></li>
                 <li class="tabs-title"><a data-tabs-target="new-panel" href="#new-panel">New Listings</a></li>
+                <li class="tabs-title"><a data-tabs-target="account-panel" href="#account-panel">My Account</a></li>
             </ul>
             <div class="tabs-content" data-tabs-content="main-tabs">
                 <div class="tabs-panel is-active" id="list-panel">
@@ -41,19 +35,9 @@
                                     <label>Add a picture of the book (optional)
                                         <input type="file" accept="image/*" id="image-upload"/>
                                     </label>
-                                    <!--<div id="filesubmit">-->
-                                        <!--<input type="file" class="file-select" accept="image/*"/>-->
-                                        <!--<button class="file-submit">SUBMIT</button>-->
-                                    <!--</div>-->
                                 </div>
                             </div>
                             <a class="button" id="create-listing-button">Create Listing</a>
-                            <p>Later, this form will just be the book name and this search button. the user will enter
-                                their
-                                query and be shown a list of books, then given the option to choose one or make a new
-                                book
-                                name.</p>
-                            <a class="button">Search</a>
                         </div>
                     </form>
                 </div>
@@ -72,56 +56,23 @@
                         </div>
                     </form>
                     <div id="search-results"></div>
-                    <!--<p>Maybe delete:</p>-->
-                    <!--<label>Major-->
-                    <!--<select>-->
-                    <!--<option value="computer-science">Computer Science</option>-->
-                    <!--<option value="math">Math</option>-->
-                    <!--<option value="philosophy">Philosophy</option>-->
-                    <!--<option value="psychology">Psychology</option>-->
-                    <!--</select>-->
-                    <!--</label>-->
-                    <!--<label>Class-->
-                    <!--<select>-->
-                    <!--<option value="computer-science">Software Engineering</option>-->
-                    <!--<option value="math">Intro CS</option>-->
-                    <!--<option value="philosophy">Networking</option>-->
-                    <!--<option value="psychology">Databases</option>-->
-                    <!--</select>-->
-                    <!--</label>-->
-                    <!--<label>Professor-->
-                    <!--<select>-->
-                    <!--<option value="hochberg">Hochberg</option>-->
-                    <!--<option value="not-hochberg">Not Hochberg</option>-->
-                    <!--<option value="russell">Russell</option>-->
-                    <!--<option value="andrews">Andrews</option>-->
-                    <!--</select>-->
-                    <!--</label>-->
-                    <!--<a class="button primary" href="#">Search</a>-->
                 </div>
                 <div class="tabs-panel new-postings" id="new-panel">
                     <a class="button float-right" id="new-listings-refresh-button">Refresh</a>
                     <h4>Recent Listings</h4>
                     <h6 class="subheader">See all newly available books</h6>
                     <div id="new-listings"></div>
-                    <!--<div class="card">-->
-                    <!--<div class="card-divider">-->
-                    <!--Modern Operating Systems-->
-                    <!--</div>-->
-                    <!--<img width="220" src="https://images-na.ssl-images-amazon.com/images/I/51UiI6CdvmL._SX340_BO1,204,203,200_.jpg">-->
-                    <!--<div class="card-section">-->
-                    <!--<p>$42.00</p>-->
-                    <!--</div>-->
-                    <!--</div>-->
-                    <!--<div class="card">-->
-                    <!--<div class="card-divider">-->
-                    <!--Modern Operating Systems-->
-                    <!--</div>-->
-                    <!--<img width="220" src="https://images-na.ssl-images-amazon.com/images/I/51UiI6CdvmL._SX340_BO1,204,203,200_.jpg">-->
-                    <!--<div class="card-section">-->
-                    <!--<p>$42.00</p>-->
-                    <!--</div>-->
-                    <!--</div>-->
+                </div>
+                <div class="tabs-panel" id="account-panel">
+                    <a class="button float-right" id="sign-out-button">Sign Out</a>
+                    <h4>My Account</h4>
+                    <div class="grid-container">
+                        <h5 id="user-name"></h5>
+                        <img style="height: 10vh" id="user-photo">
+                        <h6 id="user-email"></h6>
+                    </div>
+                    <a class="alert button float-right" id="delete-account-button">Delete Account</a>
+                    <h4>Your Listings</h4>
                 </div>
             </div>
         </div>

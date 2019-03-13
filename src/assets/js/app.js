@@ -33,14 +33,11 @@ let config = {
 };
 
 firebase.initializeApp(config);
+
+let userInfo;
 let db = firebase.firestore();
 const storageService = firebase.storage();
 const storageRef = storageService.ref();
-
-$("#create-listing-button").click(postListing);
-$("#listing-search-button").click(searchListings);
-$("#new-listings-refresh-button").click(getRecentListings);
-$(document).ready(getRecentListings);
 
 function addListingCard(listOfListings, currentIndex, jQuerySelector) {
     if(currentIndex >= listOfListings.length) {
@@ -123,8 +120,6 @@ function getRecentListings() {
         });
 }
 
-let userInfo;
-
 function postListing() {
     let theListing = {
         uid: userInfo.uid,
@@ -166,75 +161,65 @@ function postListing() {
         addListing(null);
     }
 }
-console.log(window.location.search);
-const searchParams = new URLSearchParams(window.location.search);
-if (searchParams.has("you")) {
-    console.log(searchParams.get("you"));
-}else{
-    console.log("no u");
+
+function initLoginPage() {
+    // FirebaseUI config.
+    const uiConfig = {
+        signInSuccessUrl: '/',
+        signInOptions: [
+            firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        ],
+    };
+    firebase.auth().onAuthStateChanged(function (user) {
+        // TODO also check that email ends in @udallas.edu
+        if (user) {
+            // User is signed out. Redirect to main page.
+            window.location.assign('/');
+        }
+    }, function (error) {
+        console.log(error);
+    });
+    // Initialize the FirebaseUI Widget using Firebase.
+    const ui = new firebaseui.auth.AuthUI(firebase.auth());
+    // The start method will wait until the DOM is loaded.
+    ui.start('#firebaseui-auth-container', uiConfig);
 }
 
-// FirebaseUI config.
-const uiConfig = {
-    signInSuccessUrl: '/',//http://localhost:63342/book-sharing-frontend/dist/index.html',
-    // signInFlow: 'popup',
-    signInOptions: [
-        // Leave the lines as is for the providers you want to offer your users.
-        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-        // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-        // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-        // firebase.auth.EmailAuthProvider.PROVIDER_ID,
-        // firebase.auth.PhoneAuthProvider.PROVIDER_ID,
-        // firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
-    ],
-    // tosUrl and privacyPolicyUrl accept either url string or a callback
-    // function.
-    // Terms of service url/callback.
-    // tosUrl: '<your-tos-url>',
-    // // Privacy policy url/callback.
-    // privacyPolicyUrl: function () {
-    //     window.location.assign('<your-privacy-policy-url>');
-    // }
-};
-
-// Initialize the FirebaseUI Widget using Firebase.
-const ui = new firebaseui.auth.AuthUI(firebase.auth());
-// The start method will wait until the DOM is loaded.
-ui.start('#firebaseui-auth-container', uiConfig);
-
 function initApp() {
+    $("#create-listing-button").click(postListing);
+    $("#listing-search-button").click(searchListings);
+    $("#new-listings-refresh-button").click(getRecentListings);
+    $("#sign-out-button").click(signOut);
+    $(document).ready(getRecentListings);
+
     firebase.auth().onAuthStateChanged(function (user) {
+        // TODO also check that email ends in @udallas.edu
         if (user) {
-            userInfo = user;
             // User is signed in.
-            const displayName = user.displayName;
-            const email = user.email;
-            const emailVerified = user.emailVerified;
-            const photoURL = user.photoURL;
-            const uid = user.uid;
-            const phoneNumber = user.phoneNumber;
-            const providerData = user.providerData;
-            user.getIdToken().then(function (accessToken) {
-                // $("#sign-in-status").html('Signed in');
-                // $("#sign-in").html('Sign out');
-                // $("#account-details").html(
-                //     JSON.stringify({
-                //         displayName: displayName,
-                //         email: email,
-                //         emailVerified: emailVerified,
-                //         phoneNumber: phoneNumber,
-                //         photoURL: photoURL,
-                //         uid: uid,
-                //         accessToken: accessToken,
-                //         providerData: providerData
-                //     }, null, '  ')
-                // );
-            });
+            userInfo = user;
+            $("#user-name").html(user.displayName);
+            $("#user-email").html(user.email);
+            // TODO should also show the user's given contact info and give option to change it
+
+            // jquery doesn't work changing style i guess
+            const photoElement = document.getElementById("user-photo");
+            if (user.photoURL) {
+                let photoURL = user.photoURL;
+                // Append size to the photo URL for Google hosted images to avoid requesting
+                // the image with its original resolution (using more bandwidth than needed)
+                // when it is going to be presented in smaller size.
+                if ((photoURL.indexOf("googleusercontent.com") !== -1) ||
+                    (photoURL.indexOf("ggpht.com") !== -1)) {
+                    photoURL = photoURL + '?sz=' + photoElement.clientHeight;
+                }
+                photoElement.src = photoURL;
+                photoElement.style.display = 'block';
+            } else {
+                photoElement.style.display = 'none';
+            }
         } else {
-            // User is signed out.
-            // $("#sign-in-status").html('Signed out');
-            // $("#sign-in").html('Sign in');
-            // $("#account-details").html('null');
+            // User is signed out. Redirect to login page.
+            window.location.assign('/login.html');
         }
     }, function (error) {
         console.log(error);
@@ -242,8 +227,37 @@ function initApp() {
 }
 
 window.addEventListener('load', function () {
-    initApp()
+    const path = window.location.pathname;
+    if (path === '/login.html') {
+        initLoginPage();
+    }else if (path === '/') {
+        initApp();
+    }else{
+        console.log('unknown path');
+    }
 });
+
+// TODO add the ability to delete account?
+function deleteAccount() {
+    firebase.auth().currentUser.delete().catch(function(error) {
+        if (error.code === 'auth/requires-recent-login') {
+            // The user's credential is too old. She needs to sign in again.
+            firebase.auth().signOut().then(function() {
+                // The timeout allows the message to be displayed after the UI has
+                // changed to the signed out state.
+                setTimeout(function() {
+                    alert('Please sign in again to delete your account.');
+                }, 1);
+            });
+        }
+    });
+}
+
+function signOut() {
+    // we don't need to redirect to login page since
+    // the listener made in initApp() will do that
+    firebase.auth().signOut().then(function() {});
+}
 
 function alignmentScore(string1, string2) {
     const gapScore = 3;
@@ -332,21 +346,3 @@ function searchListings() {
         getSearchScores(listings, searchString);
     });
 }
-// let selectedFile;
-// function handleFileUploadChange(e) {
-//     selectedFile = e.target.files[0];
-// }
-// function handleFileUploadSubmit(e) {
-//     const uploadTask = storageRef.child(`images/${selectedFile.name}`).put(selectedFile); //create a child directory called images, and place the file inside this directory
-//     uploadTask.on('state_changed', (snapshot) => {
-//         // Observe state change events such as progress, pause, and resume
-//     }, (error) => {
-//         // Handle unsuccessful uploads
-//         console.log(error);
-//     }, () => {
-//         // Do something once upload is complete
-//         console.log('success');
-//     });
-// }
-// document.querySelector('#image-upload').addEventListener('change', handleFileUploadChange);
-// document.querySelector('.file-submit').addEventListener('click', handleFileUploadSubmit);

@@ -1,0 +1,44 @@
+<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css"/>
+<div id="empty-top-space"></div>
+<div class="grid-container fluid">
+    <div class="grid-x">
+        <div class="cell hide-for-small-only medium-2 large-3"></div>
+        <div class="cell small-12 medium-8 large-6" id="main-column">
+            <div class="grid-container">
+                <h6 class="subheader hide-for-small-only">University of Dallas</h6>
+                <h2 class="hide-for-small-only">Book Sharing</h2>
+                <p class="show-for-small-only">Book Sharing</p>
+                <p class="show-for-small-only subheader">Share Books!</p>
+            </div>
+            <div class="grid-container">
+                <div id="loading">Loading...</div>
+                <div id="loaded" class="hidden">
+                    <div id="main">
+                        <div id="user-signed-in" class="hidden">
+                            <div id="user-info">
+                                <div id="photo-container">
+                                    <img style="height: 10vh" id="photo">
+                                </div>
+                                <div id="name"></div>
+                                <div id="email"></div>
+                                <div id="phone"></div>
+                                <div id="is-new-user"></div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <p>
+                                <button id="sign-out">Sign Out</button>
+                                <button id="delete-account">Delete account</button>
+                            </p>
+                        </div>
+                        <div id="user-signed-out" class="hidden">
+                            <h4>You are signed out.</h4>
+                        </div>
+                    </div>
+                    <div id="firebaseui-auth-container"></div>
+                </div>
+            </div>
+        </div>
+        <div class="cell hide-for-small-only medium-2 large-3"></div>
+    </div>
+</div>
+<div id="empty-bottom-space"></div>
