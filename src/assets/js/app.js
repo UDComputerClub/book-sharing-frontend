@@ -142,7 +142,7 @@ function postListing() {
             });
     }
     // for some reason, jquery can't be used for this
-    const imageFiles = document.getElementById("image-upload").files;
+    const imageFiles = document.getElementById("image-upload").files[0];
     if (imageFiles !== undefined) {
         const imageToUpload = imageFiles[0];
         const imagePath = `images/${imageToUpload.name}`;
@@ -165,15 +165,14 @@ function postListing() {
 function initLoginPage() {
     // FirebaseUI config.
     const uiConfig = {
-        signInSuccessUrl: '/',
+        signInSuccessUrl: '/login.html',
         signInOptions: [
             firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         ],
     };
     firebase.auth().onAuthStateChanged(function (user) {
-        // TODO also check that email ends in @udallas.edu
-        if (user) {
-            // User is signed out. Redirect to main page.
+        if (user && user.email.endsWith("@udallas.edu")) {
+            // User is signed in. Redirect to main page.
             window.location.assign('/');
         }
     }, function (error) {
@@ -193,8 +192,7 @@ function initApp() {
     $(document).ready(getRecentListings);
 
     firebase.auth().onAuthStateChanged(function (user) {
-        // TODO also check that email ends in @udallas.edu
-        if (user) {
+        if (user && user.email.endsWith("@udallas.edu")) {
             // User is signed in.
             userInfo = user;
             $("#user-name").html(user.displayName);
