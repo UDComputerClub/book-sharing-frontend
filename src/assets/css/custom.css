@@ -18,3 +18,9 @@ body {
 .book-image {
     max-height: 40vh;
 }
+.card {
+    background-color: #eeeeee;
+}
+th {
+    font-weight: normal !important;
+}

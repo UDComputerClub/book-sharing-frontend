@@ -46,32 +46,146 @@ function addListingCard(listOfListings, currentIndex, jQuerySelector) {
     const aListing = listOfListings[currentIndex];
     console.log(aListing);
     currentIndex++;
-    const name = aListing.name;
-    const professor = aListing.professor;
-    const price = aListing.price;
-    function cardWithImageHTML(imageUrl) {
-        return `<div class="card">
+    const name = aListing.name === undefined ? "" : aListing.name;
+    const sellingPrice = aListing.sellingPrice === undefined ? "" : "$" + aListing.sellingPrice;
+    const rentalPrice = aListing.rentalPrice === undefined ? "" : "$" + aListing.rentalPrice;
+    const theClassName = aListing.theClassName === undefined ? "" : aListing.theClassName;
+    const professor = aListing.professor === undefined ? "" : aListing.professor;
+    const contactInfo = aListing.contactInfo === undefined ? "" : aListing.contactInfo;
+    function cardHTML(imageUrl) {
+        let theHTML = `<div class="card">
             <div class="card-divider">
-                ${name}
+                <h4>${name}</h4>
             </div>
-            <div class="card-section">
-                <img class="book-image" src="${imageUrl}">
-                <p></p>
-                <p>Price: \$${price}</p>
-                <p>Professor: ${professor}</p>
-            </div>
-        </div>`;
-    }
-    function cardWithoutImageHTML() {
-        return `<div class="card">
-            <div class="card-divider">
-                ${name}
-            </div>
-            <div class="card-section">
-                <p>Price: \$${price}</p>
-                <p>Professor: ${professor}</p>
-            </div>
-        </div>`;
+            <div class="card-section">`;
+        if (imageUrl !== null) {
+            theHTML += `<img class="book-image" src="${imageUrl}">`;
+        }
+        theHTML += `<table class="unstriped show-for-medium">
+                    <thead>
+                    <tr>
+                        <th>Buy</th>
+                        <th>Rent</th>
+                        <th>Class</th>
+                        <th>Professor</th>
+                        <th>Contact</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>${sellingPrice}</td>
+                        <td>${rentalPrice}</td>
+                        <td>${theClassName}</td>
+                        <td>${professor}</td>
+                        <td>${contactInfo}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="unstriped show-for-small-only">
+                    <thead>
+                    <tr>
+                        <th>Buy</th>
+                        <th>Rent</th>
+                        <th>Contact</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>${sellingPrice}</td>
+                        <td>${rentalPrice}</td>
+                        <td>${contactInfo}</td>
+                    </tr>
+                    </tbody>
+                </table>`;
+        if (theClassName !== "" || professor !== "") {
+            theHTML += `<table class="unstriped show-for-small-only">
+                    <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Professor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>${theClassName}</td>
+                        <td>${professor}</td>
+                    </tr>
+                    </tbody>
+                </table>`;
+        }
+        theHTML += `</div></div>`;
+        //
+        //         `<table class="unstriped show-for-medium show-for-small">
+        //             <thead>
+        //             <tr>
+        //                 <th>Buy</th>
+        //                 <th>Rent</th>
+        //                 <th>Contact</th>
+        //             </tr>
+        //             </thead>
+        //             <tbody>
+        //             <tr>
+        //                 <td>${sellingPrice}</td>
+        //                 <td>${rentalPrice}</td>
+        //                 <td>${contactInfo}</td>
+        //             </tr>
+        //             </tbody>
+        //         </table>`;
+        //         `<img class="book-image" src="${imageUrl}">
+        //         <p></p>
+        //         <table class="unstriped show-for-large-only">
+        //             <thead>
+        //             <tr>
+        //                 <th>Buy</th>
+        //                 <th>Rent</th>
+        //                 <th>Class</th>
+        //                 <th>Professor</th>
+        //                 <th>Contact</th>
+        //             </tr>
+        //             </thead>
+        //             <tbody>
+        //             <tr>
+        //                 <td>${sellingPrice}</td>
+        //                 <td>${rentalPrice}</td>
+        //                 <td>${theClassName}</td>
+        //                 <td>${professor}</td>
+        //                 <td>${contactInfo}</td>
+        //             </tr>
+        //             </tbody>
+        //         </table>
+        //         <table class="unstriped show-for-medium show-for-small">
+        //             <thead>
+        //             <tr>
+        //                 <th>Buy</th>
+        //                 <th>Rent</th>
+        //                 <th>Contact</th>
+        //             </tr>
+        //             </thead>
+        //             <tbody>
+        //             <tr>
+        //                 <td>${sellingPrice}</td>
+        //                 <td>${rentalPrice}</td>
+        //                 <td>${contactInfo}</td>
+        //             </tr>
+        //             </tbody>
+        //         </table>
+        //         <table class="unstriped show-for-medium show-for-small">
+        //             <thead>
+        //             <tr>
+        //                 <th>Class</th>
+        //                 <th>Professor</th>
+        //             </tr>
+        //             </thead>
+        //             <tbody>
+        //             <tr>
+        //                 <td>${theClassName}</td>
+        //                 <td>${professor}</td>
+        //             </tr>
+        //             </tbody>
+        //         </table>
+        //     </div>
+        // </div>`;
+        return theHTML;
     }
     if (aListing.image !== undefined) {
         // Create a reference to the file we want to download
@@ -79,7 +193,7 @@ function addListingCard(listOfListings, currentIndex, jQuerySelector) {
         // Get the download URL
         imageRef.getDownloadURL().then(function(url) {
             // Insert url into an <img> tag to "download"
-            jQuerySelector.append(cardWithImageHTML(url));
+            jQuerySelector.append(cardHTML(url));
             addListingCard(listOfListings, currentIndex, jQuerySelector);
         }).catch(function(error) {
             // A full list of error codes is available at
@@ -100,7 +214,7 @@ function addListingCard(listOfListings, currentIndex, jQuerySelector) {
             }
         });
     }else{
-        jQuerySelector.append(cardWithoutImageHTML());
+        jQuerySelector.append(cardHTML(null));
         addListingCard(listOfListings, currentIndex, jQuerySelector);
     }
 }
@@ -151,9 +265,9 @@ function postListing() {
     if (professor !== "") {
         theListing.professor = professor;
     }
-    const className = $.trim($("#class-name").val());
-    if (className !== "") {
-        theListing.className = className;
+    const theClassName = $.trim($("#class-name").val());
+    if (theClassName !== "") {
+        theListing.theClassName = theClassName;
     }
     const sellRadio = $("#sell");
     const rentRadio = $("#rent");
